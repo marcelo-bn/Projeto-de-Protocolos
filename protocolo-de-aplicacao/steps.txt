@@ -1,0 +1,73 @@
+pip install --upgrade google-api-python-client
+
+'''
+    aut = mensagem_pb2.LOGIN()
+    aut.login = "teste2"
+    aut.senha = "321"
+    msg = mensagem_pb2.MENSAGEM()
+    msg.login.login = aut.login
+    msg.login.senha = aut.senha
+    data = msg.SerializeToString()
+    '''
+    '''
+    log = mensagem_pb2.LOGOUT()
+    log.token = "ddd"
+    msg = mensagem_pb2.MENSAGEM()
+    msg.logout.token = log.token
+    data = msg.SerializeToString()
+    '''
+    '''
+    req_prova = mensagem_pb2.REQ_PROVA()
+    req_prova.token = "aluno1"
+    req_prova.id_prova = "prova1"
+    msg = mensagem_pb2.MENSAGEM()
+    msg.reqprova.token = req_prova.token
+    msg.reqprova.id_prova = req_prova.id_prova 
+    data = msg.SerializeToString()
+    '''
+    '''
+    id_questao = [1,2]
+    id_alternativas = [['v3p1'],['v4p1','v5p1']]
+
+    # Questao 1 
+    cod1 = mensagem_pb2.CODIGOS()
+    cod1.codigos.append('v3p1')
+    rsp1 = mensagem_pb2.RESPOSTA()
+    rsp1.id = 1
+    rsp1.codigos.codigos.append('v3p1')
+
+    
+    # Questao 2
+    cod2 = mensagem_pb2.CODIGOS()
+    cod2.codigos.append('v4p1')
+    cod2.codigos.append('v5p1')
+    rsp2 = mensagem_pb2.RESPOSTA()
+    rsp2.id = 2
+    rsp2.codigos.codigos.append('v4p1')
+    rsp2.codigos.codigos.append('v5p')
+
+    # Mensagem REQ_RESP
+    resposta_prova = mensagem_pb2.REQ_RESP()
+    resposta_prova.token = 'aaa'
+    resposta_prova.id_prova = 'prova1'
+    resposta_prova.respostas.append(rsp1)
+    resposta_prova.respostas.append(rsp2)
+
+    msg = mensagem_pb2.MENSAGEM()
+    msg.reqresp.token = resposta_prova.token
+    msg.reqresp.id_prova = resposta_prova.id_prova 
+    msg.reqresp.respostas.append(resposta_prova.respostas[0]) 
+    msg.reqresp.respostas.append(resposta_prova.respostas[1]) 
+    data = msg.SerializeToString()
+   '''
+    
+    '''
+    # Mensagem REQ_RESULTADO
+    r = mensagem_pb2.REQ_RESULTADO()
+    r.token = "aaa"
+    r.id_prova = "prova1"
+    msg = mensagem_pb2.MENSAGEM()
+    msg.reqresultado.token = r.token
+    msg.reqresultado.id_prova = r.id_prova
+    data = msg.SerializeToString()
+    '''
