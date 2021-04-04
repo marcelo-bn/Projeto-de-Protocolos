@@ -193,7 +193,6 @@ def correcao_prova(msg_rx):
    
 
     for r in respostas: # Respostas do cliente [id:x codigos{ codgigos: 'v3p1'}, ]
-        
         if r.WhichOneof('resp') == 'texto':
             print('resposta texto')
         else:
@@ -208,6 +207,7 @@ def correcao_prova(msg_rx):
                 lista_resultados.append(result)
             else:
                 for i in range(0,len(respostas_certas)):
+                    correcao = True
                     rpc = respostas_certas[i]                  # Cada uma das repostas certas vindas do banco [(a,),(b,)]
                     if rpc[0] != r.codigos.codigos[i]:         # Verifica com reposta do usuário, se uma for diferente já errou 
                         correcao = False
@@ -224,7 +224,8 @@ def correcao_prova(msg_rx):
                     result.questao = r.id
                     result.pontos = 0
                     lista_resultados.append(result)
-            
+                
+
     ack_resultado = mensagem_pb2.ACK_REQ_RESULTADO()
     ack_resultado.id_prova = id_prova
     ack_resultado.nota = nota
@@ -259,7 +260,7 @@ def verifica_mensagem(msg_rx):
 
 # Configuração do Socket 
 sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
-sock.bind(('127.0.0.1', 9001))
+sock.bind(('127.0.0.1', 9000))
 sock.listen(5)
 conn, addr = sock.accept()
 

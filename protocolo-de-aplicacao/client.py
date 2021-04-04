@@ -2,7 +2,7 @@ import mensagem_pb2
 from socket import *
 
 s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
-s.connect(('127.0.0.1', 9001))
+s.connect(('127.0.0.1', 9000))
 
 def recebe():
     m = s.recv(1024)
@@ -93,7 +93,6 @@ def enviando_resposta(lista_idQuestao, lista_alternativas, toke, idProva):
     for i in range(0,len(resposta_prova.respostas)):
         msg.reqresp.respostas.append(resposta_prova.respostas[i])     # Armazenando as mensagens do tipo REQ_RESP
 
-    #print(msg)
     data = msg.SerializeToString()
     resposta = envia(data)
     
@@ -164,14 +163,12 @@ if __name__ == "__main__":
                             lista_aux_alternativas.append(o)
                     lista_alternativas.append(lista_aux_alternativas)
 
-                print(lista_idQuestao)
-                print(lista_alternativas)
 
                 op1 = int(input('\n> Enviar repostas? SIM [1], NÃO[2]: '))
 
                 if op1 == 1:
                     enviando_resposta(lista_idQuestao, lista_alternativas, token, idProva)
-                    op2 = int(input('> Deseja receber o resultado? SIM [1], NÃO[2]: '))
+                    op2 = int(input('\n> Deseja receber o resultado? SIM [1], NÃO[2]: '))
                     if op2 == 1:
                         r = requisicao_resultado(token, idProva)
                         print(r)
