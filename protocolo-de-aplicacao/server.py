@@ -11,7 +11,6 @@ db = mysql.connector.connect(
   auth_plugin='mysql_native_password'
 )
 
-
 # Tipos de Status
 class CodigosStatus():
     auth_success = [10,"login success"]
@@ -19,6 +18,7 @@ class CodigosStatus():
     auth_online = [12,"already logged"]
     logout = [13,"logout success"]
     resposta_armazenada = [14,"resposta armazenada"]
+    token_prova_failed = [15,"invalid token"]
 
 # Realiza autenticação
 def autenticacao(login, senha):
@@ -93,7 +93,6 @@ def ACK_prova(token,idProva):
     mycursor.execute("SELECT id,ponto,enunciado FROM Questao WHERE codigoProva = \'"+idProva+"\'")
     questoes = mycursor.fetchall()
    
-    
     # Listando alternativas de cada questão
     alternativas = []
     for q in questoes:
@@ -104,7 +103,7 @@ def ACK_prova(token,idProva):
     ack_req_prova = mensagem_pb2.ACK_REQ_PROVA()
     ack_req_prova.id_prova = idProva
 
-    lista_aux_alternativas = [] # Lista auxiliar para armazenar as mensagens PB da alternativas de determinada questao
+    lista_aux_alternativas = []         # Lista auxiliar para armazenar as mensagens PB da alternativas de determinada questao
     lista_mensagens_alternativas = []
 
     # Criando uma lista composta por listas de ALTERNATIVAS
@@ -114,7 +113,7 @@ def ACK_prova(token,idProva):
             alt.descricao = unica_alternativa[0]
             alt.codigo = unica_alternativa[1]
             lista_aux_alternativas.append(alt)
-        
+            
         lista_mensagens_alternativas.append(lista_aux_alternativas)
         lista_aux_alternativas = []
 
@@ -128,29 +127,27 @@ def ACK_prova(token,idProva):
         questao.pontos = q[1]
         for a in lista_mensagens_alternativas[i]:
             questao.alternativas.append(a)
-        
+            
         lista_mensagens_questoes.append(questao)
-   
+    
     # Criando mensagem ACK_REQ_PROVA
     for q in lista_mensagens_questoes:
         ack_req_prova.questoes.append(q)
-    
-
+        
     msg = mensagem_pb2.MENSAGEM()
     msg.ackreqprova.id_prova = ack_req_prova.id_prova
     for x in ack_req_prova.questoes:
         msg.ackreqprova.questoes.append(x)
 
- 
-    return msg # Enviar mensagem
+    
+    return msg    
     
 
 # Armazena repostas do usuário
 def armazena_respostas(msg_rx):
 
-    respostas = msg_rx.SerializeToString() # ProtocolBuffer to bytes
-    respostas_string = respostas.decode("utf-8") # bytes to string
-    #b = str.encode(s) # voltando para bytes (só realizar parse)
+    respostas = msg_rx.SerializeToString()          # ProtocolBuffer to bytes
+    respostas_string = respostas.decode("utf-8")    # bytes to string
     token = msg_rx.reqresp.token
     id_prova = msg_rx.reqresp.id_prova
     
@@ -174,10 +171,11 @@ def correcao_prova(msg_rx):
 
     token = msg_rx.reqresultado.token
     id_prova = msg_rx.reqresultado.id_prova
-
+    
     # Retirando do banco resposta armazenada
     mycursor = db.cursor()
     mycursor.execute("SELECT respostas FROM Aluno_Prova WHERE codigoProva = \'"+str(id_prova)+"\' AND tokenAluno = \'"+token+"\'")
+    
     respostas_certas = mycursor.fetchall()
     a = respostas_certas[0]         # String
     b = str.encode(a[0])            # Bytes
@@ -247,6 +245,7 @@ def correcao_prova(msg_rx):
     for i in ack_resultado.questoes:
         msg.ackreqresultado.questoes.append(i)
 
+
     return msg
 
 # Verifica tipo de mensagem recebida
@@ -267,7 +266,7 @@ def verifica_mensagem(msg_rx):
 
 # Configuração do Socket 
 sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
-sock.bind(('127.0.0.1', 9000))
+sock.bind(('127.0.0.1', 9001))
 sock.listen(5)
 conn, addr = sock.accept()
 

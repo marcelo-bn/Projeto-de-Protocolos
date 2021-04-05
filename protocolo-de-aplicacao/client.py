@@ -2,7 +2,7 @@ import mensagem_pb2
 from socket import *
 
 s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
-s.connect(('127.0.0.1', 9000))
+s.connect(('127.0.0.1', 9001))
 
 def recebe():
     m = s.recv(1024)
@@ -111,7 +111,7 @@ def requisicao_resultado(token, idProva):
     msg.reqresultado.token = r.token
     msg.reqresultado.id_prova = r.id_prova
     data = msg.SerializeToString()
-
+   
     resposta = envia(data)
 
     return resposta
@@ -145,60 +145,59 @@ if __name__ == "__main__":
             op = int(input('> Insira uma opção: '))
 
             if op == 1:
+                idProva = ""
 
-                idProva = input('> Insira o id da prova fornecido pelo seu professor: ')
-                r = requisicao_prova(token, idProva)
-                print("\n")
-
-                # Apresenta questões e alternativas
-                for q in r.ackreqprova.questoes:
-                    print(q.id,"-",q.enunciado,"(",q.pontos,"pontos)")
-                    #lista_idQuestao_alternativa.append(q.id)
-                    
-                    if len(q.alternativas) == 0:                # Questão dissertativa
-                        lista_idQuestao_dissertativa.append(q.id)
-                        print("> Questão dissertativa.",)
-                    else:
-                        lista_idQuestao_alternativa.append(q.id)
-                        for a in q.alternativas:                    # Questão múltipla escolha 
-                            print(a.codigo,"-",a.descricao)
-
-                print("\n> Responda as questões: ")    
-                # Armazena respostas
-                for q in r.ackreqprova.questoes:
-                    lista_aux_alternativas =[]
-                    print("> Questão",q.id)
-                    o = ""
-
-                    if len(q.alternativas) == 0:     
-                        texto = input("> Escreva sua resposta: ") 
-                        lista_dissertativa.append(texto)
-                    else:
-                        while o!="sair":
-                            o = input("> Digite o código da alternativa ou [sair] para ir para a próxima questão: ")
-                            if o != "sair":
-                                lista_aux_alternativas.append(o)
-                        lista_alternativas.append(lista_aux_alternativas)
-
-                print(lista_idQuestao_alternativa)
-                print(lista_alternativas)
-
-                print(lista_idQuestao_dissertativa)
-                print(lista_dissertativa)
+                while idProva != "sair":
+                    idProva = ""
+                    idProva = input('> Insira o id da prova fornecido pelo seu professor ou [sair] para voltar: ')
+                    r = requisicao_prova(token, idProva)
                 
-                op1 = int(input('\n> Enviar repostas? SIM [1], NÃO[2]: '))
-
-                if op1 == 1:
-                    enviando_resposta(lista_idQuestao_alternativa, lista_alternativas, lista_idQuestao_dissertativa, lista_dissertativa, token, idProva)
-                    op2 = int(input('\n> Deseja receber o resultado? SIM [1], NÃO[2]: '))
-                    if op2 == 1:
-                        r = requisicao_resultado(token, idProva)
-                        print(r)
+                    if len(r.ackreqprova.questoes) == 0:
+                        print("> Prova inexistente!")
                     else:
-                        break
-                else:
-                    break
+                        # Apresenta questões e alternativas
+                        for q in r.ackreqprova.questoes:
+                            print(q.id,"-",q.enunciado,"(",q.pontos,"pontos)")
+                            #lista_idQuestao_alternativa.append(q.id)
+                            
+                            if len(q.alternativas) == 0:                # Questão dissertativa
+                                lista_idQuestao_dissertativa.append(q.id)
+                                print("> Questão dissertativa.",)
+                            else:
+                                lista_idQuestao_alternativa.append(q.id)
+                                for a in q.alternativas:                    # Questão múltipla escolha 
+                                    print(a.codigo,"-",a.descricao)
 
+                        print("\n> Responda as questões: ")    
+                        # Armazena respostas
+                        for q in r.ackreqprova.questoes:
+                            lista_aux_alternativas =[]
+                            print("> Questão",q.id)
+                            o = ""
+
+                            if len(q.alternativas) == 0:     
+                                texto = input("> Escreva sua resposta: ") 
+                                lista_dissertativa.append(texto)
+                            else:
+                                while o!="sair":
+                                    o = input("> Digite o código da alternativa ou [sair] para ir para a próxima questão: ")
+                                    if o != "sair":
+                                        lista_aux_alternativas.append(o)
+                                lista_alternativas.append(lista_aux_alternativas)
+  
+                        op1 = int(input('\n> Enviar repostas? SIM [1], NÃO[2]: '))
+
+                        if op1 == 1:
+                            enviando_resposta(lista_idQuestao_alternativa, lista_alternativas, lista_idQuestao_dissertativa, lista_dissertativa, token, idProva)
+                            op2 = int(input('\n> Deseja receber o resultado? SIM [1], NÃO[2]: '))
+                            if op2 == 1:
+                                r = requisicao_resultado(token, idProva)
+                                print(r)
+                            else:
+                                break
+                        else:
+                            break
+            
             elif op == 2: 
                 logout(token)
                 auth = False
