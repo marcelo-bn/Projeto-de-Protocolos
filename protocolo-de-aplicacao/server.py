@@ -194,7 +194,14 @@ def correcao_prova(msg_rx):
 
     for r in respostas: # Respostas do cliente [id:x codigos{ codgigos: 'v3p1'}, ]
         if r.WhichOneof('resp') == 'texto':
-            print('resposta texto')
+            result = mensagem_pb2.RESULTADO()      # Mensagem de RESULTADO
+            result.questao = r.id
+            mycursor.execute("SELECT ponto FROM Questao WHERE id = "+str(r.id))
+            p = mycursor.fetchall()
+            ponto = p[0]
+            result.questao = r.id
+            result.pontos = ponto[0]
+            lista_resultados.append(result)
         else:
             mycursor = db.cursor()
             mycursor.execute("SELECT codigoAlternativa FROM Resposta WHERE idQuestao = "+str(r.id))
