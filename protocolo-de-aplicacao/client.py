@@ -2,7 +2,7 @@ import mensagem_pb2
 from socket import *
 
 s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
-s.connect(('127.0.0.1', 9001))
+s.connect(('127.0.0.1', 9002))
 
 def recebe():
     m = s.recv(1024)
@@ -96,7 +96,7 @@ def enviando_resposta(lista_idQuestao_alternativa, lista_alternativas, lista_idQ
     msg.reqresp.id_prova = resposta_prova.id_prova
     for i in range(0,len(resposta_prova.respostas)):
         msg.reqresp.respostas.append(resposta_prova.respostas[i])     # Armazenando as mensagens do tipo REQ_RESP
-
+  
     data = msg.SerializeToString()
     resposta = envia(data)
     
@@ -133,10 +133,7 @@ if __name__ == "__main__":
 
         print("Seu token é: "+token)
         auth = True
-        lista_idQuestao_alternativa = []
-        lista_idQuestao_dissertativa = []
-        lista_alternativas = []
-        lista_dissertativa = []
+        
 
         while auth:
             op = -1
@@ -146,9 +143,13 @@ if __name__ == "__main__":
 
             if op == 1:
                 idProva = ""
-
                 while idProva != "sair":
                     idProva = ""
+                    lista_idQuestao_alternativa = []
+                    lista_idQuestao_dissertativa = []
+                    lista_alternativas = []
+                    lista_dissertativa = []
+                    
                     idProva = input('> Insira o id da prova fornecido pelo seu professor ou [sair] para voltar: ')
                     r = requisicao_prova(token, idProva)
                 

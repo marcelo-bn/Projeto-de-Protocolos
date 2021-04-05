@@ -177,6 +177,7 @@ def correcao_prova(msg_rx):
     mycursor.execute("SELECT respostas FROM Aluno_Prova WHERE codigoProva = \'"+str(id_prova)+"\' AND tokenAluno = \'"+token+"\'")
     
     respostas_certas = mycursor.fetchall()
+
     a = respostas_certas[0]         # String
     b = str.encode(a[0])            # Bytes
     m = mensagem_pb2.MENSAGEM()
@@ -266,7 +267,7 @@ def verifica_mensagem(msg_rx):
 
 # Configuração do Socket 
 sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
-sock.bind(('127.0.0.1', 9001))
+sock.bind(('127.0.0.1', 9002))
 sock.listen(5)
 conn, addr = sock.accept()
 
