@@ -112,3 +112,7 @@ Para simular as trocas das mensagens deve-se executar os programas *server.py* e
 ```
 python3 server.py 9000
 ```
+
+```
+python3 client.py 9000
+```
