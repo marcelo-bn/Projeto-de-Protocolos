@@ -3,7 +3,7 @@
 > Abril de 2021
 
 Protocolo de aplicação para um cenário de realização de provas *online*. As mensagens do protocolo
-são baseados no padrão Protocol Buffers e possui as seguintes estruturas:
+são baseadas no padrão Protocol Buffers e possuem as seguintes estruturas:
 
 ```
 message LOGIN {
